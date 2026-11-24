@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Members{% endblock %}
+{% block content %}
+<h1>Members</h1>
+<p class="sub">{{ rows|length }} member(s) shown</p>
+<form class="bar" method="get">
+  <div class="grow"><label>Search by name or phone</label><input name="q" value="{{ q }}" placeholder="e.g. Aarav or 98765"></div>
+  <div><label>Status</label>
+    <select name="status">
+      <option value="all" {{ 'selected' if status == 'all' }}>All</option>
+      <option value="active" {{ 'selected' if status == 'active' }}>Active</option>
+      <option value="expired" {{ 'selected' if status == 'expired' }}>Expired</option>
+    </select></div>
+  <div><button class="btn">Filter</button></div>
+  <div><a class="btn ghost" href="{{ url_for('member_add') }}">+ Add member</a></div>
+</form>
+<table>
+  <tr><th>Name</th><th>Phone</th><th>Plan</th><th>Trainer</th><th>Valid till</th><th>Status</th></tr>
+  {% for m in rows %}
+  <tr>
+    <td><a href="{{ url_for('member_detail', member_id=m.member_id) }}">{{ m.name }}</a></td>
+    <td>{{ m.phone }}</td><td>{{ m.plan_name }}</td><td>{{ m.trainer_name or '-' }}</td>
+    <td>{{ m.end_date|pretty }}</td>
+    <td>{% if m.end_date >= today_str %}<span class="badge b-ok">Active</span>{% else %}<span class="badge b-bad">Expired</span>{% endif %}</td>
+  </tr>
+  {% else %}<tr><td colspan="6" class="muted">No members found.</td></tr>{% endfor %}
+</table>
+{% endblock %}

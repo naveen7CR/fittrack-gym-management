@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+<p class="sub">{{ today_str|pretty }}</p>
+<div class="cards">
+  <div class="card"><div class="n">{{ stats.total }}</div><div class="l">Total members</div></div>
+  <div class="card"><div class="n">{{ stats.active }}</div><div class="l">Active memberships</div></div>
+  <div class="card"><div class="n">{{ stats.expired }}</div><div class="l">Expired</div></div>
+  <div class="card"><div class="n">{{ stats.checkins }}</div><div class="l">Check-ins today</div></div>
+  <div class="card"><div class="n">{{ stats.revenue|money }}</div><div class="l">Revenue this month</div></div>
+</div>
+<div class="two">
+  <div>
+    <h2>Memberships ending in the next 7 days</h2>
+    <table>
+      <tr><th>Member</th><th>Plan</th><th>Ends</th><th></th></tr>
+      {% for m in expiring %}
+      <tr><td><a href="{{ url_for('member_detail', member_id=m.member_id) }}">{{ m.name }}</a></td><td>{{ m.plan_name }}</td>
+          <td><span class="badge b-warn">{{ m.end_date|pretty }}</span></td>
+          <td class="r"><a class="btn sm ghost" href="{{ url_for('member_detail', member_id=m.member_id) }}">Renew</a></td></tr>
+      {% else %}<tr><td colspan="4" class="muted">Nobody is expiring this week.</td></tr>{% endfor %}
+    </table>
+  </div>
+  <div>
+    <h2>Latest payments</h2>
+    <table>
+      <tr><th>Member</th><th>Date</th><th>Mode</th><th class="r">Amount</th></tr>
+      {% for p in recent %}
+      <tr><td>{{ p.name }}</td><td>{{ p.pay_date|pretty }}</td><td>{{ p.method }}</td><td class="r">{{ p.amount|money }}</td></tr>
+      {% else %}<tr><td colspan="4" class="muted">No payments yet.</td></tr>{% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

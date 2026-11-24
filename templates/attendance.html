@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Attendance{% endblock %}
+{% block content %}
+<h1>Attendance</h1>
+<p class="sub">Check members in at the front desk. Only active members can check in, once per day.</p>
+<form class="bar" method="post">
+  <div class="grow"><label>Member checking in now</label>
+    <select name="member_id" style="width:100%" required>
+      <option value="">Select a member</option>
+      {% for c in candidates %}<option value="{{ c.member_id }}">{{ c.name }} ({{ c.phone }})</option>{% endfor %}
+    </select></div>
+  <div><button class="btn">Check in</button></div>
+</form>
+<form class="bar" method="get">
+  <div><label>View another day</label><input type="date" name="date" value="{{ day }}"></div>
+  <div><button class="btn ghost">Show</button></div>
+</form>
+<h2>Check-ins on {{ day|pretty }} ({{ rows|length }})</h2>
+<table>
+  <tr><th>Time</th><th>Member</th><th>Phone</th></tr>
+  {% for r in rows %}<tr><td>{{ r.check_in_time }}</td><td><a href="{{ url_for('member_detail', member_id=r.member_id) }}">{{ r.name }}</a></td><td>{{ r.phone }}</td></tr>
+  {% else %}<tr><td colspan="3" class="muted">No check-ins on this day.</td></tr>{% endfor %}
+</table>
+{% endblock %}

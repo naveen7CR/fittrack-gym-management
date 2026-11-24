@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}{{ m.name }}{% endblock %}
+{% block content %}
+{% set active = m.end_date >= today_str %}
+<h1>{{ m.name }} {% if active %}<span class="badge b-ok">Active</span>{% else %}<span class="badge b-bad">Expired</span>{% endif %}</h1>
+<p class="sub">Member #{{ m.member_id }} &middot; joined {{ m.join_date|pretty }}</p>
+<div class="two">
+  <div class="panel">
+    <dl class="kv">
+      <dt>Phone</dt><dd>{{ m.phone }}</dd>
+      <dt>Email</dt><dd>{{ m.email or '-' }}</dd>
+      <dt>Gender</dt><dd>{{ m.gender }}</dd>
+      <dt>Trainer</dt><dd>{{ m.trainer_name or 'Not assigned' }}</dd>
+      <dt>Current plan</dt><dd>{{ m.plan_name }} ({{ m.plan_price|money }})</dd>
+      <dt>Valid</dt><dd>{{ m.start_date|pretty }} to {{ m.end_date|pretty }}</dd>
+      <dt>Total visits</dt><dd>{{ total_visits }}</dd>
+    </dl>
+    <div style="margin-top:16px;display:flex;gap:8px;align-items:center">
+      <a class="btn ghost sm" href="{{ url_for('member_edit', member_id=m.member_id) }}">Edit</a>
+      <form class="inline" method="post" action="{{ url_for('member_delete', member_id=m.member_id) }}"
+            onsubmit="return confirm('Delete this member and all their payments and attendance?')">
+        <button class="btn danger sm">Delete</button></form>
+    </div>
+  </div>
+  <div class="panel">
+    <b>Renew / change plan</b>
+    <form method="post" action="{{ url_for('member_renew', member_id=m.member_id) }}">
+      <label>Plan</label>
+      <select name="plan_id">{% for p in plans %}<option value="{{ p.plan_id }}" {{ 'selected' if p.plan_id == m.plan_id }}>{{ p.name }} - {{ p.price|money }}</option>{% endfor %}</select>
+      <label>Payment method</label>
+      <select name="method">{% for x in pay_methods %}<option>{{ x }}</option>{% endfor %}</select>
+      <p><button class="btn">Renew and record payment</button></p>
+      <p class="muted" style="font-size:13px">{{ 'The new period starts the day after the current one ends.' if active else 'The membership is expired, so the new period starts today.' }}</p>
+    </form>
+  </div>
+</div>
+<div class="two">
+  <div><h2>Payment history</h2>
+    <table><tr><th>Date</th><th>Plan</th><th>Mode</th><th class="r">Amount</th></tr>
+      {% for p in payments %}<tr><td>{{ p.pay_date|pretty }}</td><td>{{ p.plan_name }}</td><td>{{ p.method }}</td><td class="r">{{ p.amount|money }}</td></tr>
+      {% else %}<tr><td colspan="4" class="muted">No payments.</td></tr>{% endfor %}</table></div>
+  <div><h2>Recent visits</h2>
+    <table><tr><th>Date</th><th>Check-in</th></tr>
+      {% for v in visits %}<tr><td>{{ v.visit_date|pretty }}</td><td>{{ v.check_in_time }}</td></tr>
+      {% else %}<tr><td colspan="2" class="muted">No visits yet.</td></tr>{% endfor %}</table></div>
+</div>
+{% endblock %}

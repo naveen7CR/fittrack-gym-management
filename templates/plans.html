@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Plans{% endblock %}
+{% block content %}
+<h1>Membership plans</h1>
+<p class="sub">Plans are chosen when a member joins or renews.</p>
+<table>
+  <tr><th>Plan</th><th>Duration</th><th>Price</th><th>Members</th><th></th></tr>
+  {% for p in rows %}
+  <tr><td>{{ p.name }}</td><td>{{ p.duration_months }} month(s)</td>
+    <td><form class="inline" method="post" action="{{ url_for('plan_edit', plan_id=p.plan_id) }}">
+        <input name="price" value="{{ p.price|int }}" style="width:90px;display:inline"> <button class="btn ghost sm">Update</button></form></td>
+    <td>{{ p.members }}</td>
+    <td class="r"><form class="inline" method="post" action="{{ url_for('plan_delete', plan_id=p.plan_id) }}" onsubmit="return confirm('Delete this plan?')"><button class="btn danger sm">Delete</button></form></td></tr>
+  {% endfor %}
+</table>
+<h2>Add a plan</h2>
+<form method="post" class="panel bar" style="align-items:flex-end">
+  <div><label>Name</label><input name="name" required></div>
+  <div><label>Duration (months)</label><input name="duration_months" type="number" min="1" required></div>
+  <div><label>Price</label><input name="price" type="number" min="0" required></div>
+  <div><button class="btn">Add plan</button></div>
+</form>
+{% endblock %}

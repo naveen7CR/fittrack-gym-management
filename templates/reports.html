@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h1>Reports</h1>
+<p class="sub">Each report is a SQL query (JOIN, GROUP BY, aggregate) on the gym database.</p>
+<div class="two">
+  <div><h2>Revenue by plan</h2>
+    <table><tr><th>Plan</th><th class="r">Payments</th><th class="r">Revenue</th></tr>
+      {% for r in by_plan %}<tr><td>{{ r.name }}</td><td class="r">{{ r.payments }}</td><td class="r">{{ r.revenue|money }}</td></tr>{% endfor %}</table></div>
+  <div><h2>Monthly revenue (last 6 months)</h2>
+    <table><tr><th>Month</th><th class="r">Payments</th><th class="r">Revenue</th></tr>
+      {% for r in monthly %}<tr><td>{{ r.month }}</td><td class="r">{{ r.payments }}</td><td class="r">{{ r.revenue|money }}</td></tr>
+      {% else %}<tr><td colspan="3" class="muted">No data.</td></tr>{% endfor %}</table></div>
+</div>
+<div class="two">
+  <div><h2>Members per trainer</h2>
+    <table><tr><th>Trainer</th><th>Speciality</th><th class="r">Members</th></tr>
+      {% for r in by_trainer %}<tr><td>{{ r.name }}</td><td>{{ r.speciality or '-' }}</td><td class="r">{{ r.members }}</td></tr>{% endfor %}</table></div>
+  <div><h2>Most regular members (last 30 days)</h2>
+    <table><tr><th>Member</th><th class="r">Visits</th></tr>
+      {% for r in top %}<tr><td>{{ r.name }}</td><td class="r">{{ r.visits }}</td></tr>
+      {% else %}<tr><td colspan="2" class="muted">No visits yet.</td></tr>{% endfor %}</table></div>
+</div>
+<h2>Expired memberships (follow-up list)</h2>
+<table><tr><th>Member</th><th>Phone</th><th>Plan</th><th>Expired on</th></tr>
+  {% for m in expired %}<tr><td><a href="{{ url_for('member_detail', member_id=m.member_id) }}">{{ m.name }}</a></td><td>{{ m.phone }}</td><td>{{ m.plan_name }}</td><td>{{ m.end_date|pretty }}</td></tr>
+  {% else %}<tr><td colspan="4" class="muted">No expired memberships.</td></tr>{% endfor %}</table>
+{% endblock %}

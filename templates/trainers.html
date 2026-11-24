@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Trainers{% endblock %}
+{% block content %}
+<h1>Trainers</h1>
+<p class="sub">Members can be assigned to one trainer.</p>
+<table>
+  <tr><th>Name</th><th>Phone</th><th>Speciality</th><th>Members</th><th></th></tr>
+  {% for t in rows %}
+  <tr><td>{{ t.name }}</td><td>{{ t.phone }}</td><td>{{ t.speciality or '-' }}</td><td>{{ t.members }}</td>
+    <td class="r"><form class="inline" method="post" action="{{ url_for('trainer_delete', trainer_id=t.trainer_id) }}" onsubmit="return confirm('Remove this trainer?')"><button class="btn danger sm">Remove</button></form></td></tr>
+  {% endfor %}
+</table>
+<h2>Add a trainer</h2>
+<form method="post" class="panel bar" style="align-items:flex-end">
+  <div><label>Name</label><input name="name" required></div>
+  <div><label>Phone (10 digits)</label><input name="phone" required maxlength="10"></div>
+  <div><label>Speciality</label><input name="speciality"></div>
+  <div><button class="btn">Add trainer</button></div>
+</form>
+{% endblock %}

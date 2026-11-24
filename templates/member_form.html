@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit member' if editing else 'Add member' }}{% endblock %}
+{% block content %}
+<h1>{{ 'Edit member' if editing else 'Add member' }}</h1>
+<p class="sub">{{ 'Change contact details or trainer. Use Renew on the member page to change the plan.' if editing else 'Registers the member and records the first payment.' }}</p>
+<form method="post" class="panel" style="max-width:720px">
+  <div class="grid2">
+    <div><label>Full name</label><input name="name" value="{{ form['name'] or '' }}" required></div>
+    <div><label>Phone (10 digits)</label><input name="phone" value="{{ form['phone'] or '' }}" required maxlength="10"></div>
+    <div><label>Email (optional)</label><input name="email" value="{{ form['email'] or '' }}"></div>
+    <div><label>Gender</label>
+      <select name="gender">{% for g in genders %}<option {{ 'selected' if form['gender'] == g }}>{{ g }}</option>{% endfor %}</select></div>
+    <div><label>Trainer (optional)</label>
+      <select name="trainer_id"><option value="">No trainer</option>
+        {% for t in trainers %}<option value="{{ t.trainer_id }}" {{ 'selected' if form['trainer_id']|string == t.trainer_id|string }}>{{ t.name }} - {{ t.speciality or '' }}</option>{% endfor %}
+      </select></div>
+    {% if not editing %}
+    <div><label>Plan</label>
+      <select name="plan_id" required>
+        {% for p in plans %}<option value="{{ p.plan_id }}" {{ 'selected' if form['plan_id']|string == p.plan_id|string }}>{{ p.name }} - {{ p.duration_months }} month(s) - {{ p.price|money }}</option>{% endfor %}
+      </select></div>
+    <div><label>Start date</label><input type="date" name="start_date" value="{{ form['start_date'] }}" required></div>
+    <div><label>Payment method</label>
+      <select name="method">{% for x in pay_methods %}<option {{ 'selected' if form['method'] == x }}>{{ x }}</option>{% endfor %}</select></div>
+    {% endif %}
+  </div>
+  <p style="margin-top:18px"><button class="btn">{{ 'Save changes' if editing else 'Add member' }}</button>
+     <a class="btn ghost" href="{{ url_for('members') if not editing else url_for('member_detail', member_id=m.member_id) }}">Cancel</a></p>
+</form>
+{% endblock %}

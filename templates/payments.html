@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Payments{% endblock %}
+{% block content %}
+<h1>Payments</h1>
+<p class="sub">{{ rows|length }} payment(s), total {{ total|money }}</p>
+<form class="bar" method="get">
+  <div><label>Month</label><input type="month" name="month" value="{{ month }}"></div>
+  <div><button class="btn">Filter</button></div>
+  <div><a class="btn ghost" href="{{ url_for('payments') }}">Clear</a></div>
+</form>
+<table>
+  <tr><th>Date</th><th>Member</th><th>Plan</th><th>Mode</th><th class="r">Amount</th></tr>
+  {% for p in rows %}<tr><td>{{ p.pay_date|pretty }}</td><td><a href="{{ url_for('member_detail', member_id=p.member_id) }}">{{ p.name }}</a></td><td>{{ p.plan_name }}</td><td>{{ p.method }}</td><td class="r">{{ p.amount|money }}</td></tr>
+  {% else %}<tr><td colspan="5" class="muted">No payments found.</td></tr>{% endfor %}
+</table>
+{% endblock %}
